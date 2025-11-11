@@ -1,15 +1,13 @@
-import UserProfile from './components/UserProfile';
+import Counter from './components/Counter';
+import './App.css';
+
 function App() {
   return (
-    <div>
-      <UserProfile name="Alice" age="25" bio="Loves hiking and photography" />
-      <UserProfile name="Brian" age="30" bio="Enjoys coding and football" />
-      <UserProfile
-        name="Cynthia"
-        age="22"
-        bio="Passionate about fashion and travel"
-      />
+    <div className="App">
+      <h1>React Counter App</h1>
+      <Counter />
     </div>
   );
 }
+
 export default App;
