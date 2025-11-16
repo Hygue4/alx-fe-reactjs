@@ -1,4 +1,5 @@
 import { useRecipeStore } from './recipeStore';
+import DeleteRecipeButton from './DeleteRecipeButton';
 
 const RecipeDetails = ({ recipeId }) => {
   const recipe = useRecipeStore((state) =>
@@ -13,6 +14,7 @@ const RecipeDetails = ({ recipeId }) => {
     <div>
       <h1>{recipe.title}</h1>
       <p>{recipe.description}</p>
+      <DeleteRecipeButton recipeId={recipe.id} />
     </div>
   );
 };
