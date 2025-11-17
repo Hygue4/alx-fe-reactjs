@@ -1,5 +1,6 @@
 import { useRecipeStore } from './recipeStore';
 import DeleteRecipeButton from './DeleteRecipeButton';
+import FavoriteButton from './FavoriteButton';
 
 const RecipeDetails = ({ recipeId }) => {
   const recipe = useRecipeStore((state) =>
@@ -14,6 +15,7 @@ const RecipeDetails = ({ recipeId }) => {
     <div>
       <h1>{recipe.title}</h1>
       <p>{recipe.description}</p>
+      <FavoriteButton recipeId={recipe.id} />
       <DeleteRecipeButton recipeId={recipe.id} />
     </div>
   );
