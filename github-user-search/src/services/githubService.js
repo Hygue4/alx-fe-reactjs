@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const GITHUB_API_URL = 'https://api.github.com';
 
-// Create axios instance with base URL
 const githubAPI = axios.create({
   baseURL: GITHUB_API_URL,
 });
@@ -14,6 +13,38 @@ export const fetchUserData = async (username) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching user data:', error);
+    throw error;
+  }
+};
+
+// Function for advanced user search
+export const searchUsersAdvanced = async (searchParams) => {
+  try {
+    const { username, location, minRepos, page = 1 } = searchParams;
+
+    // Build query string based on provided parameters
+    let query = '';
+    if (username) query += `${username} in:login`;
+    if (location) query += ` location:${location}`;
+    if (minRepos) query += ` repos:>${minRepos}`;
+
+    const response = await githubAPI.get(
+      `/search/users?q=${encodeURIComponent(query)}&page=${page}&per_page=10`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error in advanced search:', error);
+    throw error;
+  }
+};
+
+// Function to get detailed user info (for the list) - THIS WAS MISSING!
+export const getUserDetails = async (username) => {
+  try {
+    const response = await githubAPI.get(`/users/${username}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user details:', error);
     throw error;
   }
 };
