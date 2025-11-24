@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { searchUsersAdvanced, getUserDetails } from '../services/githubService';
+import { searchUsersAdvanced, fetchUserData } from '../services/githubService';
+import UserCard from './UserCard';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useState({
@@ -12,6 +13,31 @@ const Search = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+
+  // Function that uses fetchUserData for simple search
+  const handleSimpleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchParams.username.trim()) {
+      setError('Please enter a username');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setUsers([]);
+    setPage(1);
+
+    try {
+      // Use fetchUserData for simple username search
+      const userData = await fetchUserData(searchParams.username);
+      setUsers([userData]); // Convert single user to array
+      setHasMore(false);
+    } catch {
+      setError('Looks like we cant find the user');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -67,73 +93,102 @@ const Search = () => {
   };
 
   return (
-    <div className="search-container">
-      <h2 className="search-title">GitHub User Search</h2>
+    <div className="max-w-4xl mx-auto p-6">
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        GitHub User Search
+      </h2>
 
-      {/* Advanced Search Form */}
-      <form onSubmit={handleSubmit} className="search-form">
-        <div className="form-grid">
-          <div className="form-group">
-            <label className="form-label">Username</label>
+      {/* Search Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded-lg p-6 mb-8"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Username
+            </label>
             <input
               type="text"
               name="username"
               value={searchParams.username}
               onChange={handleInputChange}
               placeholder="Enter username..."
-              className="form-input"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Location</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Location
+            </label>
             <input
               type="text"
               name="location"
               value={searchParams.location}
               onChange={handleInputChange}
               placeholder="Enter location..."
-              className="form-input"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Minimum Repositories</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Minimum Repositories
+            </label>
             <input
               type="number"
               name="minRepos"
               value={searchParams.minRepos}
               onChange={handleInputChange}
               placeholder="Min repos"
-              className="form-input"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
-        <button type="submit" disabled={loading} className="search-button">
-          {loading ? 'Searching...' : 'Search Users'}
-        </button>
+        {/* Two buttons - one using fetchUserData, one using searchUsersAdvanced */}
+        <div className="flex space-x-4">
+          <button
+            type="button"
+            onClick={handleSimpleSearch}
+            disabled={loading || !searchParams.username}
+            className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-green-300 transition-colors"
+          >
+            {loading ? 'Searching...' : 'Simple Search'}
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300 transition-colors"
+          >
+            {loading ? 'Searching...' : 'Advanced Search'}
+          </button>
+        </div>
       </form>
 
-      {/* Error Message */}
-      {error && <div className="error-message">{error}</div>}
+      {/* Error and Loading States */}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
 
-      {/* Loading State */}
       {loading && users.length === 0 && (
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading users...</p>
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading users...</p>
         </div>
       )}
 
       {/* Results */}
       {users.length > 0 && (
-        <div className="results-section">
-          <h3 className="results-title">
+        <div>
+          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
             Search Results ({users.length} users found)
           </h3>
 
-          <div className="users-grid">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {users.map((user) => (
               <UserCard key={user.id} user={user} />
             ))}
@@ -141,100 +196,16 @@ const Search = () => {
 
           {/* Load More Button */}
           {hasMore && (
-            <div className="load-more-container">
+            <div className="text-center mt-8">
               <button
                 onClick={loadMore}
                 disabled={loading}
-                className="load-more-button"
+                className="bg-gray-600 text-white py-2 px-6 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:bg-gray-300 transition-colors"
               >
                 {loading ? 'Loading...' : 'Load More'}
               </button>
             </div>
           )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-// User Card Component
-const UserCard = ({ user }) => {
-  const [userDetails, setUserDetails] = useState(null);
-  const [loadingDetails, setLoadingDetails] = useState(false);
-
-  const fetchDetails = async () => {
-    if (userDetails) return;
-
-    setLoadingDetails(true);
-    try {
-      const details = await getUserDetails(user.login);
-      setUserDetails(details);
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-    } finally {
-      setLoadingDetails(false);
-    }
-  };
-
-  return (
-    <div className="user-card" onClick={fetchDetails}>
-      <div className="user-header">
-        <img
-          src={user.avatar_url}
-          alt={`${user.login}'s avatar`}
-          className="user-avatar"
-        />
-        <div className="user-basic-info">
-          <h4 className="user-login">{user.login}</h4>
-          <a
-            href={user.html_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="profile-link"
-            onClick={(e) => e.stopPropagation()}
-          >
-            View Profile
-          </a>
-        </div>
-      </div>
-
-      {/* Additional details when loaded */}
-      {userDetails && (
-        <div className="user-details">
-          <div className="detail-row">
-            <span className="detail-label">Name:</span>
-            <span className="detail-value">
-              {userDetails.name || 'Not provided'}
-            </span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Location:</span>
-            <span className="detail-value">
-              {userDetails.location || 'Not provided'}
-            </span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Public Repos:</span>
-            <span className="detail-value">{userDetails.public_repos}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Followers:</span>
-            <span className="detail-value">{userDetails.followers}</span>
-          </div>
-          {userDetails.bio && (
-            <div className="user-bio">
-              <strong>Bio:</strong> {userDetails.bio}
-            </div>
-          )}
-        </div>
-      )}
-
-      {loadingDetails && (
-        <div className="loading-container">
-          <div
-            className="loading-spinner"
-            style={{ width: '30px', height: '30px' }}
-          ></div>
         </div>
       )}
     </div>
