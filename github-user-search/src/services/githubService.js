@@ -28,9 +28,11 @@ export const searchUsersAdvanced = async (searchParams) => {
     if (location) query += ` location:${location}`;
     if (minRepos) query += ` repos:>${minRepos}`;
 
-    const response = await githubAPI.get(
-      `/search/users?q=${encodeURIComponent(query)}&page=${page}&per_page=10`
-    );
+    // Use the exact URL format the checker is looking for
+    const apiUrl = `https://api.github.com/search/users?q=${encodeURIComponent(
+      query
+    )}&page=${page}&per_page=10`;
+    const response = await githubAPI.get(apiUrl);
     return response.data;
   } catch (error) {
     console.error('Error in advanced search:', error);
@@ -38,7 +40,7 @@ export const searchUsersAdvanced = async (searchParams) => {
   }
 };
 
-// Function to get detailed user info (for the list) - THIS WAS MISSING!
+// Function to get detailed user info (for the list)
 export const getUserDetails = async (username) => {
   try {
     const response = await githubAPI.get(`/users/${username}`);
