@@ -167,13 +167,14 @@ const Search = () => {
         </div>
       </form>
 
-      {/* Error and Loading States */}
+      {/* Error Message */}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
 
+      {/* Loading State */}
       {loading && users.length === 0 && (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
@@ -181,13 +182,52 @@ const Search = () => {
         </div>
       )}
 
-      {/* Results */}
+      {/* Results with html_url display */}
       {users.length > 0 && (
         <div>
           <h3 className="text-2xl font-semibold text-gray-800 mb-4">
             Search Results ({users.length} users found)
           </h3>
 
+          {/* Simple user list with html_url links */}
+          <div className="mb-6">
+            <h4 className="text-lg font-medium text-gray-700 mb-3">
+              Quick Results:
+            </h4>
+            <div className="bg-white shadow rounded-lg p-4">
+              {users.map((user) => (
+                <div
+                  key={user.id}
+                  className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
+                >
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src={user.avatar_url}
+                      alt={`${user.login}'s avatar`}
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-800">{user.login}</p>
+                      <a
+                        href={user.html_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        {user.html_url}
+                      </a>
+                    </div>
+                  </div>
+                  <span className="text-sm text-gray-500">GitHub Profile</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Detailed User Cards */}
+          <h4 className="text-lg font-medium text-gray-700 mb-3">
+            Detailed View:
+          </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {users.map((user) => (
               <UserCard key={user.id} user={user} />
