@@ -39,8 +39,10 @@ const Search = () => {
     }
   };
 
+  // Update this function to explicitly show target.value
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const name = e.target.name;
+    const value = e.target.value; // Explicitly using target.value
     setSearchParams((prev) => ({
       ...prev,
       [name]: value,
