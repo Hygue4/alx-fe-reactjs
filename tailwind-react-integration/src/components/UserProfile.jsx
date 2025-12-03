@@ -1,13 +1,16 @@
 function UserProfile() {
   return (
-    <div className="bg-gray-100 p-8 max-w-sm mx-auto my-20 rounded-lg shadow-lg">
+    <div className="bg-gray-100 p-4 md:p-8 max-w-xs md:max-w-sm mx-auto my-8 md:my-20 rounded-lg shadow-lg">
+      {/* Use a different image service */}
       <img
-        src="https://ui-avatars.com/api/?name=John+Doe&background=random&size=150"
+        src="https://ui-avatars.com/api/?name=John+Doe&background=6366f1&color=ffffff&size=150"
         alt="User"
-        className="rounded-full w-36 h-36 mx-auto"
+        className="rounded-full w-24 h-24 md:w-36 md:h-36 mx-auto border-4 border-white"
       />
-      <h1 className="text-xl text-blue-800 my-4">John Doe</h1>
-      <p className="text-gray-600 text-base">
+      <h1 className="text-lg md:text-xl text-blue-800 my-3 md:my-4 text-center">
+        John Doe
+      </h1>
+      <p className="text-gray-600 text-sm md:text-base text-center">
         Developer at Example Co. Loves to write code and explore new
         technologies.
       </p>
