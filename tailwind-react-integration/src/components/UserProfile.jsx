@@ -1,7 +1,6 @@
 function UserProfile() {
   return (
-    <div className="bg-gray-100 p-4 md:p-8 max-w-xs md:max-w-sm mx-auto my-8 md:my-20 rounded-lg shadow-lg">
-      {/* Use a different image service */}
+    <div className="bg-gray-100 sm:p-4 md:p-8 max-w-xs md:max-w-sm mx-auto my-8 md:my-20 rounded-lg shadow-lg">
       <img
         src="https://ui-avatars.com/api/?name=John+Doe&background=6366f1&color=ffffff&size=150"
         alt="User"
