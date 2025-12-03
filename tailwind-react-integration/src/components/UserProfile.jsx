@@ -4,7 +4,7 @@ function UserProfile() {
       <img
         src="https://ui-avatars.com/api/?name=John+Doe&background=6366f1&color=ffffff&size=150"
         alt="User"
-        className="rounded-full w-24 h-24 md:w-36 md:h-36 mx-auto border-4 border-white"
+        className="rounded-full sm:w-24 sm:h-24 md:w-36 md:h-36 mx-auto border-4 border-white"
       />
       <h1 className="text-lg md:text-xl text-blue-800 my-3 md:my-4 text-center">
         John Doe
